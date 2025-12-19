@@ -189,6 +189,7 @@
             height: 55px;
             border-radius: 50%;
             border: 3px solid #5D3A1A;
+            z-index: 2;
         }
 
         .monkey-ear {
@@ -283,6 +284,7 @@
             height: 50px;
             border-radius: 50% 50% 40% 40%;
             border: 3px solid #5D3A1A;
+            z-index: 1;
         }
 
         .monkey-belly {
@@ -633,21 +635,22 @@
             100% { transform: scale(1); }
         }
 
-        /* Space bar hint */
+        /* Space bar hint / tap button */
         .space-hint {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
-            padding: 15px 40px;
-            border-radius: 15px;
-            font-size: 2rem;
+            padding: 20px 50px;
+            border-radius: 20px;
+            font-size: 3rem;
             box-shadow: 0 6px 0 #CC8400;
             border: 4px solid #CC8400;
             display: none;
             animation: pulse-hint 0.8s ease-in-out infinite;
             z-index: 50;
+            cursor: pointer;
         }
 
         .space-hint.visible {
@@ -656,7 +659,7 @@
 
         @keyframes pulse-hint {
             0%, 100% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.05); }
+            50% { transform: translateX(-50%) scale(1.1); }
         }
 
         /* End screen */
@@ -805,6 +808,19 @@
             0% { transform: translateX(-50%) scaleY(1); }
             50% { transform: translateX(-50%) scaleY(0.92); }
             100% { transform: translateX(-50%) scaleY(1); }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 50px;
+            }
+            .bed {
+                margin-bottom: 180px;
+            }
+            .space-hint {
+                bottom: 50px;
+            }
         }
     </style>
 </head>
@@ -1077,16 +1093,16 @@
     </div>
 
     <!-- Doctor call popup -->
-    <div class="doctor-call" id="doctor-call">
+    <div class="doctor-call" id="doctor-call" onclick="handleSpacePress()" ontouchstart="handleSpacePress()">
         <div class="phone">📞</div>
         <div class="doctor">👨‍⚕️</div>
     </div>
 
-    <!-- Space bar hint -->
-    <div class="space-hint" id="space-hint">⎵</div>
+    <!-- Space bar hint / tap button -->
+    <div class="space-hint" id="space-hint" onclick="handleSpacePress()" ontouchstart="handleSpacePress()">📞</div>
 
     <!-- End screen -->
-    <div class="end-screen" id="end-screen">
+    <div class="end-screen" id="end-screen" onclick="handleSpacePress()" ontouchstart="handleSpacePress()">
         <div class="moon">🌙</div>
         <div class="goodnight">Good Night, Monkeys!</div>
         <div class="sleeping-row">
@@ -1336,19 +1352,24 @@
             }
         }
 
+        // Handle space press (keyboard or tap)
+        function handleSpacePress() {
+            if (gameEnded) {
+                initGame();
+            } else if (doctorVisible) {
+                tuckMonkeyIn();
+            } else if (hasFallenMonkeys()) {
+                callDoctor();
+            }
+        }
+
         // Controls
         document.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
 
             if (key === ' ') {
                 e.preventDefault();
-                if (gameEnded) {
-                    initGame();
-                } else if (doctorVisible) {
-                    tuckMonkeyIn();
-                } else if (hasFallenMonkeys()) {
-                    callDoctor();
-                }
+                handleSpacePress();
                 return;
             }
 
