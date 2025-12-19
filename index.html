@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 Little Monkeys</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #1a0533 0%, #2d1b4e 50%, #1a0533 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 30px;
+            font-family: 'Comic Sans MS', cursive;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 10;
+            width: 95vw;
+            max-width: 1000px;
+            overflow: visible;
+        }
+
+        /* The bed */
+        .bed {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            overflow: visible;
+            margin-bottom: 200px;
+        }
+
+        .floor {
+            position: absolute;
+            bottom: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(180deg, #2a1a4a 0%, #1a0a3a 100%);
+            border-radius: 10px;
+            z-index: 15;
+        }
+
+        .headboard {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            height: 140px;
+            background: linear-gradient(180deg, #8B4513 0%, #6B3410 100%);
+            border-radius: 30px 30px 0 0;
+            z-index: 1;
+            box-shadow: inset 0 5px 20px rgba(255,255,255,0.2);
+            border: 5px solid #5D2E0C;
+        }
+
+        .mattress {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 88%;
+            height: 90px;
+            background: linear-gradient(180deg, #FF6B6B 0%, #EE5A5A 50%, #CC4444 100%);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 5px solid #AA3333;
+            z-index: 5;
+        }
+
+        .blanket {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 88%;
+            height: 70px;
+            background: linear-gradient(180deg, #9370DB 0%, #7B5FC7 100%);
+            border-radius: 15px;
+            border: 4px solid #5D4A9C;
+            z-index: 6;
+        }
+
+        .bed-legs {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .bed-leg {
+            width: 30px;
+            height: 50px;
+            background: linear-gradient(180deg, #8B4513 0%, #5D2E0C 100%);
+            border-radius: 5px;
+        }
+
+        /* Monkey positions */
+        .monkeys-container {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+            overflow: visible;
+        }
+
+        .monkey-spot {
+            position: relative;
+            width: 18%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: visible;
+        }
+
+        /* Active jumping monkey */
+        .monkey {
+            width: 80px;
+            height: 100px;
+            position: relative;
+            cursor: pointer;
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.4));
+            transition: transform 0.1s;
+        }
+
+        .monkey.hidden {
+            display: none;
+        }
+
+        .monkey.jumping {
+            animation: jump 0.5s ease-out;
+        }
+
+        @keyframes jump {
+            0% { transform: translateY(0) scale(1); }
+            35% { transform: translateY(-160px) scale(1.1); }
+            50% { transform: translateY(-170px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+
+        .monkey-head {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 65px;
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #5D3A1A;
+        }
+
+        .monkey-ear {
+            position: absolute;
+            top: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #5D3A1A;
+        }
+
+        .monkey-ear.left { left: -8px; }
+        .monkey-ear.right { right: -8px; }
+
+        .monkey-ear-inner {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 10px;
+            height: 10px;
+            background: #FFDAB9;
+            border-radius: 50%;
+        }
+
+        .monkey-face {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 35px;
+            background: linear-gradient(180deg, #FFDAB9 0%, #F5C8A8 100%);
+            border-radius: 50%;
+        }
+
+        .monkey-eyes {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+
+        .monkey-eye {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid #333;
+            position: relative;
+        }
+
+        .monkey-pupil {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 5px;
+            height: 5px;
+            background: #222;
+            border-radius: 50%;
+        }
+
+        .monkey-nose {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 5px;
+            background: #5D3A1A;
+            border-radius: 50%;
+        }
+
+        .monkey-mouth {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 4px;
+            border-bottom: 2px solid #5D3A1A;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .monkey-body {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 50px;
+            border-radius: 50% 50% 40% 40%;
+            border: 3px solid #5D3A1A;
+        }
+
+        .monkey-belly {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            height: 25px;
+            background: #DEB887;
+            border-radius: 50%;
+        }
+
+        .monkey-arm {
+            position: absolute;
+            top: 55px;
+            width: 12px;
+            height: 30px;
+            border-radius: 20px;
+            border: 2px solid #5D3A1A;
+            transform-origin: top center;
+        }
+
+        .monkey-arm.left {
+            left: 8px;
+            transform: rotate(20deg);
+        }
+
+        .monkey-arm.right {
+            right: 8px;
+            transform: rotate(-20deg);
+        }
+
+        /* Happy jumping face */
+        .monkey.jumping .monkey-eye,
+        .monkey.happy .monkey-eye {
+            height: 4px;
+            background: #222;
+            border-radius: 10px;
+        }
+
+        .monkey.jumping .monkey-mouth,
+        .monkey.happy .monkey-mouth {
+            width: 20px;
+            height: 10px;
+            background: #FF6B6B;
+            border: 2px solid #5D3A1A;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .monkey.jumping .monkey-arm.left,
+        .monkey.happy .monkey-arm.left {
+            transform: rotate(-40deg);
+        }
+
+        .monkey.jumping .monkey-arm.right,
+        .monkey.happy .monkey-arm.right {
+            transform: rotate(40deg);
+        }
+
+        /* Fallen monkey on ground - same size as jumping monkey */
+        .fallen-monkey {
+            position: absolute;
+            bottom: -145px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 60px;
+            display: none;
+            z-index: 25;
+        }
+
+        .fallen-monkey.visible {
+            display: block;
+            animation: fall-down 0.8s ease-in forwards;
+        }
+
+        @keyframes fall-down {
+            0% {
+                bottom: 60px;
+                left: 50%;
+                transform: translateX(-50%) rotate(0deg);
+            }
+            20% {
+                bottom: 80px;
+                transform: translateX(-50%) rotate(15deg);
+            }
+            40% {
+                bottom: 20px;
+                transform: translateX(-30%) rotate(-45deg);
+            }
+            60% {
+                bottom: -60px;
+                transform: translateX(-20%) rotate(-90deg);
+            }
+            80% {
+                bottom: -120px;
+                transform: translateX(-40%) rotate(-120deg);
+            }
+            90% {
+                bottom: -155px;
+                transform: translateX(-50%) rotate(-10deg);
+            }
+            100% {
+                bottom: -145px;
+                transform: translateX(-50%) rotate(0deg);
+            }
+        }
+
+        .fallen-monkey .monkey-head {
+            width: 65px;
+            height: 55px;
+        }
+
+        .fallen-monkey .monkey-ear {
+            width: 22px;
+            height: 22px;
+            top: 8px;
+        }
+
+        .fallen-monkey .monkey-ear.left { left: -8px; }
+        .fallen-monkey .monkey-ear.right { right: -8px; }
+
+        .fallen-monkey .monkey-ear-inner {
+            width: 10px;
+            height: 10px;
+            top: 4px;
+            left: 4px;
+        }
+
+        .fallen-monkey .monkey-face {
+            width: 45px;
+            height: 35px;
+            top: 18px;
+        }
+
+        .fallen-monkey .monkey-eyes {
+            gap: 12px;
+            top: 5px;
+        }
+
+        .fallen-monkey .monkey-eye {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Sad face */
+        .fallen-monkey .monkey-eye {
+            background: #222;
+            height: 4px;
+            border-radius: 10px;
+            transform: rotate(-10deg);
+        }
+
+        .fallen-monkey .monkey-eye:last-child {
+            transform: rotate(10deg);
+        }
+
+        .fallen-monkey .monkey-mouth {
+            top: 24px;
+            width: 15px;
+            height: 8px;
+            border: 2px solid #5D3A1A;
+            border-radius: 10px 10px 0 0;
+            border-bottom: none;
+        }
+
+        /* Sleeping monkey in bed - tucked under blanket */
+        .sleeping-monkey {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 60px;
+            display: none;
+            z-index: 7;
+        }
+
+        .sleeping-monkey.visible {
+            display: block;
+            animation: tuck-in 0.5s ease-out;
+        }
+
+        @keyframes tuck-in {
+            0% {
+                transform: translateX(-50%) translateY(-50px) scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(-50%) translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .sleeping-monkey .sleep-head {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 65px;
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #5D3A1A;
+        }
+
+        .sleeping-monkey .sleep-ear {
+            position: absolute;
+            top: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #5D3A1A;
+        }
+
+        .sleeping-monkey .sleep-ear.left { left: -8px; }
+        .sleeping-monkey .sleep-ear.right { right: -8px; }
+
+        .sleeping-monkey .sleep-ear-inner {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 10px;
+            height: 10px;
+            background: #FFDAB9;
+            border-radius: 50%;
+        }
+
+        .sleeping-monkey .sleep-face {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 35px;
+            background: #FFDAB9;
+            border-radius: 50%;
+        }
+
+        .sleeping-monkey .sleep-eyes {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+
+        .sleeping-monkey .sleep-eye {
+            width: 12px;
+            height: 3px;
+            background: #333;
+            border-radius: 10px;
+        }
+
+        .sleeping-monkey .sleep-mouth {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 6px;
+            border-bottom: 2px solid #5D3A1A;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .sleeping-monkey .zzz {
+            position: absolute;
+            top: -10px;
+            right: -5px;
+            font-size: 1.4rem;
+            animation: zzz-float 1.5s ease-in-out infinite;
+        }
+
+        @keyframes zzz-float {
+            0%, 100% { transform: translateY(0); opacity: 0.7; }
+            50% { transform: translateY(-8px); opacity: 1; }
+        }
+
+        /* Key indicators */
+        .key-hint {
+            position: absolute;
+            bottom: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 5px 0 #2E7D32;
+            border: 3px solid #1B5E20;
+            transition: all 0.1s;
+        }
+
+        .key-hint.pressed {
+            transform: translateX(-50%) translateY(3px);
+            box-shadow: 0 2px 0 #2E7D32;
+        }
+
+        .key-hint.disabled {
+            background: linear-gradient(180deg, #666 0%, #444 100%);
+            box-shadow: 0 5px 0 #333;
+            border-color: #222;
+            opacity: 0.5;
+        }
+
+        /* Doctor phone call */
+        .doctor-call {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 8rem;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s ease-out;
+        }
+
+        .doctor-call.visible {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .doctor-call .phone {
+            animation: phone-ring 0.3s ease-in-out infinite;
+        }
+
+        @keyframes phone-ring {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .doctor-call .doctor {
+            animation: doctor-pop 0.5s ease-out 0.3s both;
+        }
+
+        @keyframes doctor-pop {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Space bar hint */
+        .space-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
+            padding: 15px 40px;
+            border-radius: 15px;
+            font-size: 2rem;
+            box-shadow: 0 6px 0 #CC8400;
+            border: 4px solid #CC8400;
+            display: none;
+            animation: pulse-hint 0.8s ease-in-out infinite;
+            z-index: 50;
+        }
+
+        .space-hint.visible {
+            display: block;
+        }
+
+        @keyframes pulse-hint {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+        }
+
+        /* End screen */
+        .end-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 5, 51, 0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .end-screen.visible {
+            display: flex;
+        }
+
+        .end-screen .moon {
+            font-size: 10rem;
+            animation: moon-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes moon-glow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 30px #FFD700); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 50px #FFD700); }
+        }
+
+        .end-screen .goodnight {
+            font-size: clamp(2rem, 8vw, 4rem);
+            color: #FFD700;
+            text-shadow: 4px 4px 0 #FF6B35;
+            margin: 30px 0;
+        }
+
+        .end-screen .sleeping-row {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .end-screen .end-sleeping-monkey {
+            font-size: 4rem;
+            animation: sleep-sway 2s ease-in-out infinite;
+        }
+
+        .end-screen .end-sleeping-monkey:nth-child(2) { animation-delay: 0.2s; }
+        .end-screen .end-sleeping-monkey:nth-child(3) { animation-delay: 0.4s; }
+        .end-screen .end-sleeping-monkey:nth-child(4) { animation-delay: 0.6s; }
+        .end-screen .end-sleeping-monkey:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes sleep-sway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        /* Sparkles */
+        .sparkle {
+            position: fixed;
+            font-size: 0.9rem;
+            animation: sparkle-fly 0.5s ease-out forwards;
+            pointer-events: none;
+            z-index: 500;
+            opacity: 0.8;
+        }
+
+        @keyframes sparkle-fly {
+            0% {
+                opacity: 0.8;
+                transform: scale(0) rotate(0deg);
+            }
+            40% {
+                opacity: 0.8;
+                transform: scale(1) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.3) rotate(360deg) translateY(-20px);
+            }
+        }
+
+        /* Monkey colors */
+        .monkey-spot:nth-child(1) .monkey-head,
+        .monkey-spot:nth-child(1) .monkey-body,
+        .monkey-spot:nth-child(1) .monkey-arm,
+        .monkey-spot:nth-child(1) .monkey-ear,
+        .monkey-spot:nth-child(1) .fallen-monkey .monkey-head,
+        .monkey-spot:nth-child(1) .fallen-monkey .monkey-ear,
+        .monkey-spot:nth-child(1) .sleeping-monkey .sleep-head,
+        .monkey-spot:nth-child(1) .sleeping-monkey .sleep-ear {
+            background: linear-gradient(180deg, #FF6B6B 0%, #EE5A5A 100%);
+        }
+
+        .monkey-spot:nth-child(2) .monkey-head,
+        .monkey-spot:nth-child(2) .monkey-body,
+        .monkey-spot:nth-child(2) .monkey-arm,
+        .monkey-spot:nth-child(2) .monkey-ear,
+        .monkey-spot:nth-child(2) .fallen-monkey .monkey-head,
+        .monkey-spot:nth-child(2) .fallen-monkey .monkey-ear,
+        .monkey-spot:nth-child(2) .sleeping-monkey .sleep-head,
+        .monkey-spot:nth-child(2) .sleeping-monkey .sleep-ear {
+            background: linear-gradient(180deg, #FFB347 0%, #FFA033 100%);
+        }
+
+        .monkey-spot:nth-child(3) .monkey-head,
+        .monkey-spot:nth-child(3) .monkey-body,
+        .monkey-spot:nth-child(3) .monkey-arm,
+        .monkey-spot:nth-child(3) .monkey-ear,
+        .monkey-spot:nth-child(3) .fallen-monkey .monkey-head,
+        .monkey-spot:nth-child(3) .fallen-monkey .monkey-ear,
+        .monkey-spot:nth-child(3) .sleeping-monkey .sleep-head,
+        .monkey-spot:nth-child(3) .sleeping-monkey .sleep-ear {
+            background: linear-gradient(180deg, #77DD77 0%, #5BC55B 100%);
+        }
+
+        .monkey-spot:nth-child(4) .monkey-head,
+        .monkey-spot:nth-child(4) .monkey-body,
+        .monkey-spot:nth-child(4) .monkey-arm,
+        .monkey-spot:nth-child(4) .monkey-ear,
+        .monkey-spot:nth-child(4) .fallen-monkey .monkey-head,
+        .monkey-spot:nth-child(4) .fallen-monkey .monkey-ear,
+        .monkey-spot:nth-child(4) .sleeping-monkey .sleep-head,
+        .monkey-spot:nth-child(4) .sleeping-monkey .sleep-ear {
+            background: linear-gradient(180deg, #89CFF0 0%, #6BB8E0 100%);
+        }
+
+        .monkey-spot:nth-child(5) .monkey-head,
+        .monkey-spot:nth-child(5) .monkey-body,
+        .monkey-spot:nth-child(5) .monkey-arm,
+        .monkey-spot:nth-child(5) .monkey-ear,
+        .monkey-spot:nth-child(5) .fallen-monkey .monkey-head,
+        .monkey-spot:nth-child(5) .fallen-monkey .monkey-ear,
+        .monkey-spot:nth-child(5) .sleeping-monkey .sleep-head,
+        .monkey-spot:nth-child(5) .sleeping-monkey .sleep-ear {
+            background: linear-gradient(180deg, #DDA0DD 0%, #CC8FCC 100%);
+        }
+
+        .mattress.bounce {
+            animation: bed-bounce 0.2s ease-out;
+        }
+
+        @keyframes bed-bounce {
+            0% { transform: translateX(-50%) scaleY(1); }
+            50% { transform: translateX(-50%) scaleY(0.92); }
+            100% { transform: translateX(-50%) scaleY(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <div class="game-container">
+        <div class="bed">
+            <div class="headboard"></div>
+            <div class="blanket"></div>
+            <div class="mattress" id="mattress"></div>
+            <div class="bed-legs">
+                <div class="bed-leg"></div>
+                <div class="bed-leg"></div>
+            </div>
+            <div class="floor"></div>
+
+            <div class="monkeys-container">
+                <!-- Monkey 1 -->
+                <div class="monkey-spot">
+                    <div class="monkey" id="monkey-0">
+                        <div class="monkey-head">
+                            <div class="monkey-ear left"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-ear right"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-face">
+                                <div class="monkey-eyes">
+                                    <div class="monkey-eye"><div class="monkey-pupil"></div></div>
+                                    <div class="monkey-eye"><div class="monkey-pupil"></div></div>
+                                </div>
+                                <div class="monkey-nose"></div>
+                                <div class="monkey-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="monkey-body"><div class="monkey-belly"></div></div>
+                        <div class="monkey-arm left"></div>
+                        <div class="monkey-arm right"></div>
+                    </div>
+                    <div class="fallen-monkey" id="fallen-0">
+                        <div class="monkey-head">
+                            <div class="monkey-ear left"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-ear right"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-face">
+                                <div class="monkey-eyes">
+                                    <div class="monkey-eye"></div>
+                                    <div class="monkey-eye"></div>
+                                </div>
+                                <div class="monkey-nose"></div>
+                                <div class="monkey-mouth"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sleeping-monkey" id="sleeping-0">
+                        <div class="sleep-head">
+                            <div class="sleep-ear left"><div class="sleep-ear-inner"></div></div>
+                            <div class="sleep-ear right"><div class="sleep-ear-inner"></div></div>
+                            <div class="sleep-face">
+                                <div class="sleep-eyes">
+                                    <div class="sleep-eye"></div>
+                                    <div class="sleep-eye"></div>
+                                </div>
+                                <div class="sleep-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="zzz">💤</div>
+                    </div>
+                    <div class="key-hint" id="key-0">D</div>
+                </div>
+
+                <!-- Monkey 2 -->
+                <div class="monkey-spot">
+                    <div class="monkey" id="monkey-1">
+                        <div class="monkey-head">
+                            <div class="monkey-ear left"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-ear right"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-face">
+                                <div class="monkey-eyes">
+                                    <div class="monkey-eye"><div class="monkey-pupil"></div></div>
+                                    <div class="monkey-eye"><div class="monkey-pupil"></div></div>
+                                </div>
+                                <div class="monkey-nose"></div>
+                                <div class="monkey-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="monkey-body"><div class="monkey-belly"></div></div>
+                        <div class="monkey-arm left"></div>
+                        <div class="monkey-arm right"></div>
+                    </div>
+                    <div class="fallen-monkey" id="fallen-1">
+                        <div class="monkey-head">
+                            <div class="monkey-ear left"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-ear right"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-face">
+                                <div class="monkey-eyes">
+                                    <div class="monkey-eye"></div>
+                                    <div class="monkey-eye"></div>
+                                </div>
+                                <div class="monkey-nose"></div>
+                                <div class="monkey-mouth"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sleeping-monkey" id="sleeping-1">
+                        <div class="sleep-head">
+                            <div class="sleep-ear left"><div class="sleep-ear-inner"></div></div>
+                            <div class="sleep-ear right"><div class="sleep-ear-inner"></div></div>
+                            <div class="sleep-face">
+                                <div class="sleep-eyes">
+                                    <div class="sleep-eye"></div>
+                                    <div class="sleep-eye"></div>
+                                </div>
+                                <div class="sleep-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="zzz">💤</div>
+                    </div>
+                    <div class="key-hint" id="key-1">F</div>
+                </div>
+
+                <!-- Monkey 3 -->
+                <div class="monkey-spot">
+                    <div class="monkey" id="monkey-2">
+                        <div class="monkey-head">
+                            <div class="monkey-ear left"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-ear right"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-face">
+                                <div class="monkey-eyes">
+                                    <div class="monkey-eye"><div class="monkey-pupil"></div></div>
+                                    <div class="monkey-eye"><div class="monkey-pupil"></div></div>
+                                </div>
+                                <div class="monkey-nose"></div>
+                                <div class="monkey-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="monkey-body"><div class="monkey-belly"></div></div>
+                        <div class="monkey-arm left"></div>
+                        <div class="monkey-arm right"></div>
+                    </div>
+                    <div class="fallen-monkey" id="fallen-2">
+                        <div class="monkey-head">
+                            <div class="monkey-ear left"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-ear right"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-face">
+                                <div class="monkey-eyes">
+                                    <div class="monkey-eye"></div>
+                                    <div class="monkey-eye"></div>
+                                </div>
+                                <div class="monkey-nose"></div>
+                                <div class="monkey-mouth"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sleeping-monkey" id="sleeping-2">
+                        <div class="sleep-head">
+                            <div class="sleep-ear left"><div class="sleep-ear-inner"></div></div>
+                            <div class="sleep-ear right"><div class="sleep-ear-inner"></div></div>
+                            <div class="sleep-face">
+                                <div class="sleep-eyes">
+                                    <div class="sleep-eye"></div>
+                                    <div class="sleep-eye"></div>
+                                </div>
+                                <div class="sleep-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="zzz">💤</div>
+                    </div>
+                    <div class="key-hint" id="key-2">G</div>
+                </div>
+
+                <!-- Monkey 4 -->
+                <div class="monkey-spot">
+                    <div class="monkey" id="monkey-3">
+                        <div class="monkey-head">
+                            <div class="monkey-ear left"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-ear right"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-face">
+                                <div class="monkey-eyes">
+                                    <div class="monkey-eye"><div class="monkey-pupil"></div></div>
+                                    <div class="monkey-eye"><div class="monkey-pupil"></div></div>
+                                </div>
+                                <div class="monkey-nose"></div>
+                                <div class="monkey-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="monkey-body"><div class="monkey-belly"></div></div>
+                        <div class="monkey-arm left"></div>
+                        <div class="monkey-arm right"></div>
+                    </div>
+                    <div class="fallen-monkey" id="fallen-3">
+                        <div class="monkey-head">
+                            <div class="monkey-ear left"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-ear right"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-face">
+                                <div class="monkey-eyes">
+                                    <div class="monkey-eye"></div>
+                                    <div class="monkey-eye"></div>
+                                </div>
+                                <div class="monkey-nose"></div>
+                                <div class="monkey-mouth"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sleeping-monkey" id="sleeping-3">
+                        <div class="sleep-head">
+                            <div class="sleep-ear left"><div class="sleep-ear-inner"></div></div>
+                            <div class="sleep-ear right"><div class="sleep-ear-inner"></div></div>
+                            <div class="sleep-face">
+                                <div class="sleep-eyes">
+                                    <div class="sleep-eye"></div>
+                                    <div class="sleep-eye"></div>
+                                </div>
+                                <div class="sleep-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="zzz">💤</div>
+                    </div>
+                    <div class="key-hint" id="key-3">H</div>
+                </div>
+
+                <!-- Monkey 5 -->
+                <div class="monkey-spot">
+                    <div class="monkey" id="monkey-4">
+                        <div class="monkey-head">
+                            <div class="monkey-ear left"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-ear right"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-face">
+                                <div class="monkey-eyes">
+                                    <div class="monkey-eye"><div class="monkey-pupil"></div></div>
+                                    <div class="monkey-eye"><div class="monkey-pupil"></div></div>
+                                </div>
+                                <div class="monkey-nose"></div>
+                                <div class="monkey-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="monkey-body"><div class="monkey-belly"></div></div>
+                        <div class="monkey-arm left"></div>
+                        <div class="monkey-arm right"></div>
+                    </div>
+                    <div class="fallen-monkey" id="fallen-4">
+                        <div class="monkey-head">
+                            <div class="monkey-ear left"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-ear right"><div class="monkey-ear-inner"></div></div>
+                            <div class="monkey-face">
+                                <div class="monkey-eyes">
+                                    <div class="monkey-eye"></div>
+                                    <div class="monkey-eye"></div>
+                                </div>
+                                <div class="monkey-nose"></div>
+                                <div class="monkey-mouth"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sleeping-monkey" id="sleeping-4">
+                        <div class="sleep-head">
+                            <div class="sleep-ear left"><div class="sleep-ear-inner"></div></div>
+                            <div class="sleep-ear right"><div class="sleep-ear-inner"></div></div>
+                            <div class="sleep-face">
+                                <div class="sleep-eyes">
+                                    <div class="sleep-eye"></div>
+                                    <div class="sleep-eye"></div>
+                                </div>
+                                <div class="sleep-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="zzz">💤</div>
+                    </div>
+                    <div class="key-hint" id="key-4">J</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor call popup -->
+    <div class="doctor-call" id="doctor-call">
+        <div class="phone">📞</div>
+        <div class="doctor">👨‍⚕️</div>
+    </div>
+
+    <!-- Space bar hint -->
+    <div class="space-hint" id="space-hint">⎵</div>
+
+    <!-- End screen -->
+    <div class="end-screen" id="end-screen">
+        <div class="moon">🌙</div>
+        <div class="goodnight">Good Night, Monkeys!</div>
+        <div class="sleeping-row">
+            <div class="end-sleeping-monkey">🙈💤</div>
+            <div class="end-sleeping-monkey">🙈💤</div>
+            <div class="end-sleeping-monkey">🙈💤</div>
+            <div class="end-sleeping-monkey">🙈💤</div>
+            <div class="end-sleeping-monkey">🙈💤</div>
+        </div>
+    </div>
+
+    <script>
+        // Stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 60 + '%';
+            star.style.width = (Math.random() * 4 + 2) + 'px';
+            star.style.height = star.style.width;
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Audio
+        let audioContext;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(freq, duration, type = 'sine') {
+            if (!audioContext) return;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+            osc.type = type;
+            gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            osc.start();
+            osc.stop(audioContext.currentTime + duration);
+        }
+
+        function playJumpSound(index) {
+            const freqs = [300, 350, 400, 450, 500];
+            playSound(freqs[index], 0.2);
+            setTimeout(() => playSound(freqs[index] * 1.5, 0.15), 100);
+        }
+
+        function playBonkSound() {
+            playSound(200, 0.3, 'sawtooth');
+            setTimeout(() => playSound(100, 0.2, 'sawtooth'), 100);
+        }
+
+        function playPhoneSound() {
+            playSound(440, 0.15);
+            setTimeout(() => playSound(480, 0.15), 200);
+            setTimeout(() => playSound(440, 0.15), 400);
+        }
+
+        function playTuckSound() {
+            playSound(523, 0.2);
+            setTimeout(() => playSound(659, 0.2), 150);
+            setTimeout(() => playSound(784, 0.3), 300);
+        }
+
+        function playLullaby() {
+            const notes = [523, 587, 659, 523, 587, 659, 784, 659];
+            notes.forEach((freq, i) => {
+                setTimeout(() => playSound(freq, 0.4), i * 250);
+            });
+        }
+
+        function playBounce() {
+            playSound(150, 0.1);
+        }
+
+        // Sparkles - different colors for each monkey!
+        const monkeySparkles = [
+            ['❤️', '💖', '💗', '✨', '⭐'],           // Red monkey - hearts
+            ['🧡', '🌟', '✨', '💛', '⭐'],           // Orange monkey - warm stars
+            ['💚', '🌟', '✨', '💫', '⭐'],           // Green monkey - green hearts
+            ['💙', '🩵', '⭐', '✨', '💎'],           // Blue monkey - blue hearts & stars
+            ['💜', '💗', '🩷', '✨', '⭐']            // Purple monkey - purple & pink
+        ];
+
+        function createSparkles(x, y, monkeyIndex) {
+            const emojis = monkeySparkles[monkeyIndex] || ['⭐', '✨', '💫', '🌟'];
+            for (let i = 0; i < 5; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+                // Random position around the monkey
+                const angle = (i / 5) * Math.PI * 2 + Math.random() * 0.5;
+                const distance = 20 + Math.random() * 30;
+                const offsetX = Math.cos(angle) * distance;
+                const offsetY = Math.sin(angle) * distance - 30;
+
+                sparkle.style.left = (x + offsetX) + 'px';
+                sparkle.style.top = (y + offsetY) + 'px';
+                sparkle.style.animationDelay = (Math.random() * 0.1) + 's';
+                sparkle.style.fontSize = (0.7 + Math.random() * 0.4) + 'rem';
+
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 500);
+            }
+        }
+
+        // Game state
+        const keyMap = { 'd': 0, 'f': 1, 'g': 2, 'h': 3, 'j': 4 };
+        const mattress = document.getElementById('mattress');
+        const doctorCall = document.getElementById('doctor-call');
+        const spaceHint = document.getElementById('space-hint');
+        const endScreen = document.getElementById('end-screen');
+
+        let monkeyState = {};
+        let doctorVisible = false;
+        let gameEnded = false;
+
+        function initGame() {
+            for (let i = 0; i < 5; i++) {
+                monkeyState[i] = {
+                    jumpCount: 0,
+                    fallAfterJumps: 3 + Math.floor(Math.random() * 8), // 3-10 jumps
+                    status: 'jumping' // jumping, fallen, sleeping
+                };
+                document.getElementById(`monkey-${i}`).classList.remove('hidden');
+                document.getElementById(`fallen-${i}`).classList.remove('visible');
+                document.getElementById(`sleeping-${i}`).classList.remove('visible');
+                document.getElementById(`key-${i}`).classList.remove('disabled');
+            }
+            doctorVisible = false;
+            gameEnded = false;
+            doctorCall.classList.remove('visible');
+            spaceHint.classList.remove('visible');
+            endScreen.classList.remove('visible');
+        }
+
+        function makeMonkeyJump(index) {
+            if (gameEnded) return;
+            if (monkeyState[index].status !== 'jumping') return;
+            if (doctorVisible) return; // Only block jumping when doctor is on screen
+
+            const monkey = document.getElementById(`monkey-${index}`);
+            const keyHint = document.getElementById(`key-${index}`);
+
+            if (monkey.classList.contains('jumping')) return;
+
+            initAudio();
+            monkeyState[index].jumpCount++;
+
+            // Check if monkey should fall after this jump
+            if (monkeyState[index].jumpCount >= monkeyState[index].fallAfterJumps) {
+                monkeyFalls(index);
+                return;
+            }
+
+            monkey.classList.add('jumping');
+            keyHint.classList.add('pressed');
+            playJumpSound(index);
+
+            const rect = monkey.getBoundingClientRect();
+            createSparkles(rect.left + rect.width / 2, rect.top, index);
+
+            setTimeout(() => {
+                mattress.classList.add('bounce');
+                playBounce();
+                setTimeout(() => mattress.classList.remove('bounce'), 200);
+            }, 300);
+
+            setTimeout(() => {
+                monkey.classList.remove('jumping');
+                keyHint.classList.remove('pressed');
+            }, 400);
+        }
+
+        function monkeyFalls(index) {
+            const monkey = document.getElementById(`monkey-${index}`);
+            const fallen = document.getElementById(`fallen-${index}`);
+            const keyHint = document.getElementById(`key-${index}`);
+
+            monkeyState[index].status = 'fallen';
+
+            monkey.classList.add('hidden');
+            fallen.classList.add('visible');
+            keyHint.classList.add('disabled');
+
+            playBonkSound();
+            spaceHint.classList.add('visible');
+        }
+
+        function getFirstFallenMonkey() {
+            for (let i = 0; i < 5; i++) {
+                if (monkeyState[i].status === 'fallen') return i;
+            }
+            return null;
+        }
+
+        function hasFallenMonkeys() {
+            return Object.values(monkeyState).some(m => m.status === 'fallen');
+        }
+
+        function callDoctor() {
+            if (doctorVisible) return;
+            if (!hasFallenMonkeys()) return;
+
+            initAudio();
+            playPhoneSound();
+            doctorVisible = true;
+            doctorCall.classList.add('visible');
+        }
+
+        function tuckMonkeyIn() {
+            // Hide doctor first
+            doctorCall.classList.remove('visible');
+            doctorVisible = false;
+
+            // Tuck in ALL fallen monkeys at once
+            for (let i = 0; i < 5; i++) {
+                if (monkeyState[i].status === 'fallen') {
+                    const fallen = document.getElementById(`fallen-${i}`);
+                    const sleeping = document.getElementById(`sleeping-${i}`);
+
+                    fallen.classList.remove('visible');
+                    sleeping.classList.add('visible');
+                    monkeyState[i].status = 'sleeping';
+                }
+            }
+
+            playTuckSound();
+            spaceHint.classList.remove('visible');
+
+            // Check if all sleeping
+            const allSleeping = Object.values(monkeyState).every(m => m.status === 'sleeping');
+            if (allSleeping) {
+                setTimeout(() => {
+                    gameEnded = true;
+                    playLullaby();
+                    endScreen.classList.add('visible');
+                }, 500);
+            }
+        }
+
+        // Controls
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+
+            if (key === ' ') {
+                e.preventDefault();
+                if (gameEnded) {
+                    initGame();
+                } else if (doctorVisible) {
+                    tuckMonkeyIn();
+                } else if (hasFallenMonkeys()) {
+                    callDoctor();
+                }
+                return;
+            }
+
+            if (key in keyMap) {
+                e.preventDefault();
+                makeMonkeyJump(keyMap[key]);
+            }
+        });
+
+        // Touch/click
+        document.querySelectorAll('.monkey-spot').forEach((spot, index) => {
+            spot.addEventListener('click', () => makeMonkeyJump(index));
+            spot.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                makeMonkeyJump(index);
+            });
+        });
+
+        document.addEventListener('click', initAudio, { once: true });
+        document.addEventListener('keydown', initAudio, { once: true });
+
+        initGame();
+    </script>
+</body>
+</html>
