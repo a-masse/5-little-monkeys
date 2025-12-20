@@ -924,16 +924,20 @@
                 justify-content: flex-start;
                 padding-top: 20px;
             }
+            .game-container {
+                transform: scale(0.85);
+                transform-origin: top center;
+            }
             .bed {
-                margin-bottom: 160px;
+                margin-bottom: 140px;
             }
             .fallen-monkey {
-                bottom: -120px;
+                bottom: -100px;
             }
             @keyframes jump {
                 0% { transform: translateX(-50%) translateY(0) scale(1); }
-                35% { transform: translateX(-50%) translateY(-100px) scale(1.1); }
-                50% { transform: translateX(-50%) translateY(-110px) scale(1.1); }
+                35% { transform: translateX(-50%) translateY(-80px) scale(1.1); }
+                50% { transform: translateX(-50%) translateY(-90px) scale(1.1); }
                 100% { transform: translateX(-50%) translateY(0) scale(1); }
             }
             @keyframes fall-down {
@@ -943,11 +947,11 @@
                     transform: translateX(-50%) rotate(0deg);
                 }
                 50% {
-                    bottom: -30px;
+                    bottom: -20px;
                     transform: translateX(-30%) rotate(-60deg);
                 }
                 100% {
-                    bottom: -120px;
+                    bottom: -100px;
                     transform: translateX(-50%) rotate(0deg);
                 }
             }
@@ -1430,6 +1434,7 @@
 
         let monkeyState = {};
         let doctorVisible = false;
+        let doctorCanDismiss = false;
         let gameEnded = false;
 
         function initGame() {
@@ -1445,6 +1450,7 @@
                 document.getElementById(`key-${i}`).classList.remove('disabled');
             }
             doctorVisible = false;
+            doctorCanDismiss = false;
             gameEnded = false;
             doctorCall.classList.remove('visible');
             spaceHint.classList.remove('visible');
@@ -1522,7 +1528,13 @@
             initAudio();
             playPhoneSound();
             doctorVisible = true;
+            doctorCanDismiss = false;
             doctorCall.classList.add('visible');
+
+            // Wait 3 seconds before allowing dismiss (time for the rhyme!)
+            setTimeout(() => {
+                doctorCanDismiss = true;
+            }, 3000);
         }
 
         function tuckMonkeyIn() {
@@ -1560,9 +1572,9 @@
         function handleSpacePress() {
             if (gameEnded) {
                 initGame();
-            } else if (doctorVisible) {
+            } else if (doctorVisible && doctorCanDismiss) {
                 tuckMonkeyIn();
-            } else if (hasFallenMonkeys()) {
+            } else if (!doctorVisible && hasFallenMonkeys()) {
                 callDoctor();
             }
         }
