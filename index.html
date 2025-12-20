@@ -1795,19 +1795,17 @@
                 clearTimeout(doctorDismissTimer);
             }
 
-            // Add small delay before allowing dismissal to prevent immediate re-trigger
+            // Small delay to prevent accidental immediate dismissal from same tap
             setTimeout(() => {
                 doctorCanDismiss = true;
-            }, 800);
+            }, 300);
 
-            // Auto-dismiss after 7 seconds on mobile
-            if (isMobile) {
-                doctorDismissTimer = setTimeout(() => {
-                    if (doctorVisible) {
-                        tuckMonkeyIn();
-                    }
-                }, 7000);
-            }
+            // Auto-dismiss after 6 seconds (time to say the rhyme) on all devices
+            doctorDismissTimer = setTimeout(() => {
+                if (doctorVisible) {
+                    tuckMonkeyIn();
+                }
+            }, 6000);
         }
 
         function tuckMonkeyIn() {
