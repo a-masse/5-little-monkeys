@@ -118,19 +118,20 @@
 
         .bed-legs {
             position: absolute;
-            bottom: 0;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90%;
+            width: 86%;
             display: flex;
             justify-content: space-between;
         }
 
         .bed-leg {
             width: 30px;
-            height: 50px;
+            height: 45px;
             background: linear-gradient(180deg, #8B4513 0%, #5D2E0C 100%);
             border-radius: 5px;
+            box-shadow: inset 0 5px 10px rgba(255,255,255,0.1);
         }
 
         /* Monkey positions */
@@ -149,24 +150,29 @@
         .monkey-spot {
             position: relative;
             width: 18%;
+            min-width: 80px;
+            height: 100px;
             display: flex;
             flex-direction: column;
             align-items: center;
             overflow: visible;
+            flex-shrink: 0;
         }
 
         /* Active jumping monkey */
         .monkey {
             width: 80px;
             height: 100px;
-            position: relative;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
             cursor: pointer;
             filter: drop-shadow(0 8px 15px rgba(0,0,0,0.4));
-            transition: transform 0.1s;
         }
 
         .monkey.hidden {
-            display: none;
+            visibility: hidden;
         }
 
         .monkey.jumping {
@@ -174,10 +180,10 @@
         }
 
         @keyframes jump {
-            0% { transform: translateY(0) scale(1); }
-            35% { transform: translateY(-160px) scale(1.1); }
-            50% { transform: translateY(-170px) scale(1.1); }
-            100% { transform: translateY(0) scale(1); }
+            0% { transform: translateX(-50%) translateY(0) scale(1); }
+            35% { transform: translateX(-50%) translateY(-160px) scale(1.1); }
+            50% { transform: translateX(-50%) translateY(-170px) scale(1.1); }
+            100% { transform: translateX(-50%) translateY(0) scale(1); }
         }
 
         .monkey-head {
@@ -354,7 +360,7 @@
             width: 80px;
             height: 60px;
             display: none;
-            z-index: 25;
+            z-index: 60;
         }
 
         .fallen-monkey.visible {
@@ -567,7 +573,7 @@
         /* Key indicators */
         .key-hint {
             position: absolute;
-            bottom: -45px;
+            bottom: -55px;
             left: 50%;
             transform: translateX(-50%);
             width: 45px;
@@ -700,19 +706,121 @@
 
         .end-screen .sleeping-row {
             display: flex;
-            gap: 30px;
+            gap: 20px;
             margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .end-screen .end-sleeping-monkey {
-            font-size: 4rem;
+        .end-screen .end-monkey-head {
+            position: relative;
+            width: 65px;
+            height: 65px;
             animation: sleep-sway 2s ease-in-out infinite;
         }
 
-        .end-screen .end-sleeping-monkey:nth-child(2) { animation-delay: 0.2s; }
-        .end-screen .end-sleeping-monkey:nth-child(3) { animation-delay: 0.4s; }
-        .end-screen .end-sleeping-monkey:nth-child(4) { animation-delay: 0.6s; }
-        .end-screen .end-sleeping-monkey:nth-child(5) { animation-delay: 0.8s; }
+        .end-screen .end-monkey-head:nth-child(2) { animation-delay: 0.2s; }
+        .end-screen .end-monkey-head:nth-child(3) { animation-delay: 0.4s; }
+        .end-screen .end-monkey-head:nth-child(4) { animation-delay: 0.6s; }
+        .end-screen .end-monkey-head:nth-child(5) { animation-delay: 0.8s; }
+
+        .end-screen .end-head {
+            width: 65px;
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #5D3A1A;
+            position: relative;
+        }
+
+        .end-screen .end-ear {
+            position: absolute;
+            top: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #5D3A1A;
+        }
+
+        .end-screen .end-ear.left { left: -8px; }
+        .end-screen .end-ear.right { right: -8px; }
+
+        .end-screen .end-ear-inner {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 10px;
+            height: 10px;
+            background: #FFDAB9;
+            border-radius: 50%;
+        }
+
+        .end-screen .end-face {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 35px;
+            background: #FFDAB9;
+            border-radius: 50%;
+        }
+
+        .end-screen .end-eyes {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+
+        .end-screen .end-eye {
+            width: 12px;
+            height: 3px;
+            background: #333;
+            border-radius: 10px;
+        }
+
+        .end-screen .end-mouth {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 6px;
+            border-bottom: 2px solid #5D3A1A;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .end-screen .end-zzz {
+            position: absolute;
+            top: -10px;
+            right: -5px;
+            font-size: 1.2rem;
+            animation: zzz-float 1.5s ease-in-out infinite;
+        }
+
+        /* End screen monkey colors */
+        .end-screen .end-monkey-head:nth-child(1) .end-head,
+        .end-screen .end-monkey-head:nth-child(1) .end-ear {
+            background: linear-gradient(180deg, #FF6B6B 0%, #EE5A5A 100%);
+        }
+        .end-screen .end-monkey-head:nth-child(2) .end-head,
+        .end-screen .end-monkey-head:nth-child(2) .end-ear {
+            background: linear-gradient(180deg, #FFB347 0%, #FFA033 100%);
+        }
+        .end-screen .end-monkey-head:nth-child(3) .end-head,
+        .end-screen .end-monkey-head:nth-child(3) .end-ear {
+            background: linear-gradient(180deg, #77DD77 0%, #5BC55B 100%);
+        }
+        .end-screen .end-monkey-head:nth-child(4) .end-head,
+        .end-screen .end-monkey-head:nth-child(4) .end-ear {
+            background: linear-gradient(180deg, #89CFF0 0%, #6BB8E0 100%);
+        }
+        .end-screen .end-monkey-head:nth-child(5) .end-head,
+        .end-screen .end-monkey-head:nth-child(5) .end-ear {
+            background: linear-gradient(180deg, #DDA0DD 0%, #CC8FCC 100%);
+        }
 
         @keyframes sleep-sway {
             0%, 100% { transform: rotate(-5deg); }
@@ -813,13 +921,39 @@
         /* Mobile adjustments */
         @media (max-width: 768px) {
             body {
-                padding-bottom: 50px;
+                justify-content: flex-start;
+                padding-top: 20px;
             }
             .bed {
-                margin-bottom: 180px;
+                margin-bottom: 160px;
+            }
+            .fallen-monkey {
+                bottom: -120px;
+            }
+            @keyframes jump {
+                0% { transform: translateX(-50%) translateY(0) scale(1); }
+                35% { transform: translateX(-50%) translateY(-100px) scale(1.1); }
+                50% { transform: translateX(-50%) translateY(-110px) scale(1.1); }
+                100% { transform: translateX(-50%) translateY(0) scale(1); }
+            }
+            @keyframes fall-down {
+                0% {
+                    bottom: 60px;
+                    left: 50%;
+                    transform: translateX(-50%) rotate(0deg);
+                }
+                50% {
+                    bottom: -30px;
+                    transform: translateX(-30%) rotate(-60deg);
+                }
+                100% {
+                    bottom: -120px;
+                    transform: translateX(-50%) rotate(0deg);
+                }
             }
             .space-hint {
-                bottom: 50px;
+                bottom: 20px;
+                z-index: 20;
             }
         }
     </style>
@@ -1106,11 +1240,81 @@
         <div class="moon">🌙</div>
         <div class="goodnight">Good Night, Monkeys!</div>
         <div class="sleeping-row">
-            <div class="end-sleeping-monkey">🙈💤</div>
-            <div class="end-sleeping-monkey">🙈💤</div>
-            <div class="end-sleeping-monkey">🙈💤</div>
-            <div class="end-sleeping-monkey">🙈💤</div>
-            <div class="end-sleeping-monkey">🙈💤</div>
+            <!-- Red monkey -->
+            <div class="end-monkey-head">
+                <div class="end-head">
+                    <div class="end-ear left"><div class="end-ear-inner"></div></div>
+                    <div class="end-ear right"><div class="end-ear-inner"></div></div>
+                    <div class="end-face">
+                        <div class="end-eyes">
+                            <div class="end-eye"></div>
+                            <div class="end-eye"></div>
+                        </div>
+                        <div class="end-mouth"></div>
+                    </div>
+                </div>
+                <div class="end-zzz">💤</div>
+            </div>
+            <!-- Orange monkey -->
+            <div class="end-monkey-head">
+                <div class="end-head">
+                    <div class="end-ear left"><div class="end-ear-inner"></div></div>
+                    <div class="end-ear right"><div class="end-ear-inner"></div></div>
+                    <div class="end-face">
+                        <div class="end-eyes">
+                            <div class="end-eye"></div>
+                            <div class="end-eye"></div>
+                        </div>
+                        <div class="end-mouth"></div>
+                    </div>
+                </div>
+                <div class="end-zzz">💤</div>
+            </div>
+            <!-- Green monkey -->
+            <div class="end-monkey-head">
+                <div class="end-head">
+                    <div class="end-ear left"><div class="end-ear-inner"></div></div>
+                    <div class="end-ear right"><div class="end-ear-inner"></div></div>
+                    <div class="end-face">
+                        <div class="end-eyes">
+                            <div class="end-eye"></div>
+                            <div class="end-eye"></div>
+                        </div>
+                        <div class="end-mouth"></div>
+                    </div>
+                </div>
+                <div class="end-zzz">💤</div>
+            </div>
+            <!-- Blue monkey -->
+            <div class="end-monkey-head">
+                <div class="end-head">
+                    <div class="end-ear left"><div class="end-ear-inner"></div></div>
+                    <div class="end-ear right"><div class="end-ear-inner"></div></div>
+                    <div class="end-face">
+                        <div class="end-eyes">
+                            <div class="end-eye"></div>
+                            <div class="end-eye"></div>
+                        </div>
+                        <div class="end-mouth"></div>
+                    </div>
+                </div>
+                <div class="end-zzz">💤</div>
+            </div>
+            <!-- Purple monkey -->
+            <div class="end-monkey-head">
+                <div class="end-head">
+                    <div class="end-ear left"><div class="end-ear-inner"></div></div>
+                    <div class="end-ear right"><div class="end-ear-inner"></div></div>
+                    <div class="end-face">
+                        <div class="end-eyes">
+                            <div class="end-eye"></div>
+                            <div class="end-eye"></div>
+                        </div>
+                        <div class="end-mouth"></div>
+                    </div>
+                </div>
+                <div class="end-zzz">💤</div>
+            </div>
         </div>
     </div>
 
