@@ -1375,16 +1375,16 @@
     </div>
 
     <!-- Doctor call popup -->
-    <div class="doctor-call" id="doctor-call" onclick="handleSpacePress()" ontouchstart="handleSpacePress()">
+    <div class="doctor-call" id="doctor-call">
         <div class="phone">📞</div>
         <div class="doctor">👨‍⚕️</div>
     </div>
 
     <!-- Space bar hint / tap button -->
-    <div class="space-hint" id="space-hint" onclick="handleSpacePress()" ontouchstart="handleSpacePress()">📞</div>
+    <div class="space-hint" id="space-hint">📞</div>
 
     <!-- End screen -->
-    <div class="end-screen" id="end-screen" onclick="handleSpacePress()" ontouchstart="handleSpacePress()">
+    <div class="end-screen" id="end-screen">
         <div class="moon">🌙</div>
         <div class="goodnight">Good Night, Monkeys!</div>
         <div class="sleeping-row">
@@ -1883,6 +1883,40 @@
                 e.preventDefault();
                 makeMonkeyJump(index);
             });
+        });
+
+        // Space hint button - prevent duplicate events
+        spaceHint.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleSpacePress();
+        });
+        spaceHint.addEventListener('click', (e) => {
+            // Only handle click if no touch event occurred recently
+            if (!('ontouchstart' in window)) {
+                handleSpacePress();
+            }
+        });
+
+        // Doctor call popup - prevent duplicate events
+        doctorCall.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleSpacePress();
+        });
+        doctorCall.addEventListener('click', (e) => {
+            if (!('ontouchstart' in window)) {
+                handleSpacePress();
+            }
+        });
+
+        // End screen - prevent duplicate events
+        endScreen.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleSpacePress();
+        });
+        endScreen.addEventListener('click', (e) => {
+            if (!('ontouchstart' in window)) {
+                handleSpacePress();
+            }
         });
 
         document.addEventListener('click', initAudio, { once: true });
