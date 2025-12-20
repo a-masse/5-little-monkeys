@@ -1097,6 +1097,13 @@
             box-shadow: 0 6px 0 #990000;
             border: 4px solid #880000;
         }
+
+        /* Hide key hints on mobile - users tap monkeys directly */
+        @media (max-width: 768px) {
+            .key-hint {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1600,7 +1607,7 @@
             doctorCall.classList.remove('visible');
             spaceHint.classList.remove('visible');
             spaceHint.classList.remove('hangup');
-            spaceHint.textContent = '📞';
+            spaceHint.innerHTML = '📞';
             endScreen.classList.remove('visible');
         }
 
@@ -1678,8 +1685,8 @@
             doctorCanDismiss = false;
             doctorCall.classList.add('visible');
 
-            // Change button to hang-up style
-            spaceHint.textContent = '📴';
+            // Change button to hang-up style (phone receiver down like iPhone)
+            spaceHint.innerHTML = '<span style="display: inline-block; transform: rotate(135deg);">📞</span>';
             spaceHint.classList.add('hangup');
 
             // Clear any existing timer
@@ -1714,7 +1721,7 @@
             doctorVisible = false;
 
             // Reset button to call style
-            spaceHint.textContent = '📞';
+            spaceHint.innerHTML = '📞';
             spaceHint.classList.remove('hangup');
 
             // Tuck in ALL fallen monkeys at once
