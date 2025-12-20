@@ -921,18 +921,100 @@
         /* Mobile adjustments */
         @media (max-width: 768px) {
             body {
-                justify-content: flex-start;
-                padding-top: 20px;
+                justify-content: center;
+                padding: 20px 0;
             }
             .game-container {
-                transform: scale(0.85);
-                transform-origin: top center;
+                width: 98vw;
+                max-width: none;
             }
             .bed {
-                margin-bottom: 140px;
+                height: 240px;
+                margin-bottom: 160px;
+            }
+            .monkeys-container {
+                width: 92%;
+                bottom: 85px;
+                gap: 2%;
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                justify-items: center;
+            }
+            .monkey-spot {
+                width: 100%;
+                min-width: 0;
+                height: 90px;
+            }
+            .monkey {
+                width: 70px;
+                height: 90px;
+            }
+            .monkey-head {
+                width: 58px;
+                height: 48px;
+            }
+            .monkey-ear {
+                width: 20px;
+                height: 20px;
+                top: 6px;
+            }
+            .monkey-ear-inner {
+                width: 9px;
+                height: 9px;
+            }
+            .monkey-face {
+                width: 40px;
+                height: 30px;
+                top: 16px;
+            }
+            .monkey-body {
+                width: 40px;
+                height: 45px;
+            }
+            .monkey-arm {
+                width: 11px;
+                height: 28px;
+                top: 48px;
             }
             .fallen-monkey {
-                bottom: -100px;
+                bottom: -115px;
+            }
+            .fallen-monkey .monkey-head {
+                width: 58px;
+                height: 48px;
+            }
+            .fallen-monkey .monkey-ear {
+                width: 20px;
+                height: 20px;
+                top: 6px;
+            }
+            .fallen-monkey .monkey-face {
+                width: 40px;
+                height: 30px;
+                top: 16px;
+            }
+            .sleeping-monkey {
+                width: 60px;
+                height: 55px;
+                bottom: 25px;
+            }
+            .sleeping-monkey .sleep-head {
+                width: 58px;
+                height: 48px;
+            }
+            .sleeping-monkey .sleep-ear {
+                width: 20px;
+                height: 20px;
+            }
+            .sleeping-monkey .sleep-face {
+                width: 40px;
+                height: 30px;
+            }
+            .key-hint {
+                width: 40px;
+                height: 40px;
+                font-size: 1.3rem;
+                bottom: -50px;
             }
             @keyframes jump {
                 0% { transform: translateX(-50%) translateY(0) scale(1); }
@@ -951,14 +1033,69 @@
                     transform: translateX(-30%) rotate(-60deg);
                 }
                 100% {
-                    bottom: -100px;
+                    bottom: -115px;
                     transform: translateX(-50%) rotate(0deg);
                 }
             }
             .space-hint {
                 bottom: 20px;
-                z-index: 20;
+                z-index: 120;
+                padding: 18px 45px;
+                font-size: 2.5rem;
             }
+            .doctor-call {
+                font-size: 6rem;
+                z-index: 100;
+            }
+        }
+
+        /* Portrait mobile - most critical fixes */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .game-container {
+                width: 98vw;
+            }
+            .bed {
+                height: 220px;
+                margin-bottom: 150px;
+            }
+            .monkeys-container {
+                width: 95%;
+                bottom: 80px;
+            }
+            .monkey-spot {
+                height: 85px;
+            }
+            .monkey {
+                width: 65px;
+                height: 85px;
+            }
+            .monkey-head {
+                width: 54px;
+                height: 45px;
+            }
+            .monkey-ear {
+                width: 18px;
+                height: 18px;
+            }
+            .monkey-body {
+                width: 38px;
+                height: 42px;
+            }
+            .fallen-monkey .monkey-head {
+                width: 54px;
+                height: 45px;
+            }
+            .sleeping-monkey .sleep-head {
+                width: 54px;
+                height: 45px;
+            }
+        }
+
+        /* Hang up button styling */
+        .space-hint.hangup {
+            background: linear-gradient(180deg, #FF4444 0%, #CC0000 100%);
+            box-shadow: 0 6px 0 #990000;
+            border: 4px solid #880000;
         }
     </style>
 </head>
@@ -1436,8 +1573,16 @@
         let doctorVisible = false;
         let doctorCanDismiss = false;
         let gameEnded = false;
+        let doctorDismissTimer = null;
+        let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         function initGame() {
+            // Clear any existing timers
+            if (doctorDismissTimer) {
+                clearTimeout(doctorDismissTimer);
+                doctorDismissTimer = null;
+            }
+
             for (let i = 0; i < 5; i++) {
                 monkeyState[i] = {
                     jumpCount: 0,
@@ -1454,6 +1599,8 @@
             gameEnded = false;
             doctorCall.classList.remove('visible');
             spaceHint.classList.remove('visible');
+            spaceHint.classList.remove('hangup');
+            spaceHint.textContent = '📞';
             endScreen.classList.remove('visible');
         }
 
@@ -1531,16 +1678,44 @@
             doctorCanDismiss = false;
             doctorCall.classList.add('visible');
 
+            // Change button to hang-up style
+            spaceHint.textContent = '📴';
+            spaceHint.classList.add('hangup');
+
+            // Clear any existing timer
+            if (doctorDismissTimer) {
+                clearTimeout(doctorDismissTimer);
+            }
+
             // Wait 3 seconds before allowing dismiss (time for the rhyme!)
             setTimeout(() => {
                 doctorCanDismiss = true;
             }, 3000);
+
+            // Auto-dismiss after 7 seconds on mobile
+            if (isMobile) {
+                doctorDismissTimer = setTimeout(() => {
+                    if (doctorVisible) {
+                        tuckMonkeyIn();
+                    }
+                }, 7000);
+            }
         }
 
         function tuckMonkeyIn() {
+            // Clear auto-dismiss timer
+            if (doctorDismissTimer) {
+                clearTimeout(doctorDismissTimer);
+                doctorDismissTimer = null;
+            }
+
             // Hide doctor first
             doctorCall.classList.remove('visible');
             doctorVisible = false;
+
+            // Reset button to call style
+            spaceHint.textContent = '📞';
+            spaceHint.classList.remove('hangup');
 
             // Tuck in ALL fallen monkeys at once
             for (let i = 0; i < 5; i++) {
