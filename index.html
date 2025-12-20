@@ -698,10 +698,14 @@
         }
 
         .end-screen .goodnight {
-            font-size: clamp(2rem, 8vw, 4rem);
+            font-size: clamp(2.5rem, 10vw, 5rem);
             color: #FFD700;
-            text-shadow: 4px 4px 0 #FF6B35;
+            text-shadow: 4px 4px 0 #FF6B35, 0 0 20px rgba(255, 215, 0, 0.5);
             margin: 30px 0;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: none;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive;
         }
 
         .end-screen .sleeping-row {
@@ -1852,7 +1856,8 @@
         // Handle space press (keyboard or tap)
         function handleSpacePress() {
             if (gameEnded) {
-                initGame();
+                // Game ended - don't restart, require page refresh
+                return;
             } else if (doctorVisible && doctorCanDismiss) {
                 tuckMonkeyIn();
             } else if (!doctorVisible && hasFallenMonkeys()) {
@@ -1866,7 +1871,9 @@
 
             if (key === ' ') {
                 e.preventDefault();
-                handleSpacePress();
+                if (!gameEnded) {
+                    handleSpacePress();
+                }
                 return;
             }
 
@@ -1908,16 +1915,7 @@
             }
         });
 
-        // End screen - prevent duplicate events
-        endScreen.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            handleSpacePress();
-        });
-        endScreen.addEventListener('click', (e) => {
-            if (!('ontouchstart' in window)) {
-                handleSpacePress();
-            }
-        });
+        // End screen - no event listeners, require page refresh to restart
 
         document.addEventListener('click', initAudio, { once: true });
         document.addEventListener('keydown', initAudio, { once: true });
