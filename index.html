@@ -1093,9 +1093,9 @@
 
         /* Hang up button styling */
         .space-hint.hangup {
-            background: linear-gradient(180deg, #FF4444 0%, #CC0000 100%);
-            box-shadow: 0 6px 0 #990000;
-            border: 4px solid #880000;
+            background: linear-gradient(180deg, #FF3B30 0%, #FF1E1E 100%);
+            box-shadow: 0 6px 0 #DD0000;
+            border: 4px solid #CC0000;
         }
 
         /* Hide key hints on mobile - users tap monkeys directly */
@@ -1694,10 +1694,8 @@
                 clearTimeout(doctorDismissTimer);
             }
 
-            // Wait 3 seconds before allowing dismiss (time for the rhyme!)
-            setTimeout(() => {
-                doctorCanDismiss = true;
-            }, 3000);
+            // Make button immediately responsive (no delay)
+            doctorCanDismiss = true;
 
             // Auto-dismiss after 7 seconds on mobile
             if (isMobile) {
