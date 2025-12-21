@@ -461,13 +461,13 @@
         /* Sleeping monkey in bed - tucked under blanket */
         .sleeping-monkey {
             position: absolute;
-            bottom: 30px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
             width: 70px;
             height: 60px;
             display: none;
-            z-index: 7;
+            z-index: 5;
         }
 
         .sleeping-monkey.visible {
@@ -1002,7 +1002,7 @@
             .sleeping-monkey {
                 width: 60px;
                 height: 55px;
-                bottom: 25px;
+                bottom: 20px;
             }
             .sleeping-monkey .sleep-head {
                 width: 58px;
@@ -1534,7 +1534,7 @@
             const star = document.createElement('div');
             star.className = 'star';
             star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 60 + '%';
+            star.style.top = Math.random() * 100 + '%';
             star.style.width = (Math.random() * 4 + 2) + 'px';
             star.style.height = star.style.width;
             star.style.animationDelay = Math.random() * 2 + 's';
